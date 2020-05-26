@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { loginUser } from "../_actions/user_actions";
+import { Link } from "react-router-dom";
 
 class Login extends Component {
   state = {
@@ -45,6 +46,7 @@ class Login extends Component {
         ),
       });
     }
+    this.setState({ email: "", password: "" });
   };
 
   isValidForm = ({ email, password }) => email && password;
@@ -58,6 +60,11 @@ class Login extends Component {
     return (
       <div className="container">
         <h2>Log In</h2>
+        <div className="col s3">
+          <Link to="/register">
+            Not registered?
+          </Link>
+        </div>
         <div className="row">
           <form className="col s12" onSubmit={(e) => this.handleSubmit(e)}>
             <div className="row">
