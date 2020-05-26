@@ -1,4 +1,7 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
+import { loginUser } from "../_actions/user_actions";
+import { Link } from "react-router-dom";
 
 class Login extends Component {
   state = {
@@ -22,21 +25,46 @@ class Login extends Component {
 
     if (this.isValidForm(this.state)) {
       this.setState({ errors: [] });
+      // You can use axios instead utilizing redux
+      this.props.dispatch(loginUser(dataToSubmit))
+        .then((response) => {
+          if (response.payload.loginSuccess === true) {
+            this.props.history.push("/");
+          } else {
+            this.setState({
+              errors: this.state.errors.concat(
+                "Failed to log in, invalid email and/or password",
+              ),
+            });
+          }
+        })
+        .catch((err) => console.error(err));
+    } else {
+      this.setState({
+        errors: this.state.errors.concat(
+          "Invalid form: both email and password required to log in!",
+        ),
+      });
     }
+    this.setState({ email: "", password: "" });
   };
 
   isValidForm = ({ email, password }) => email && password;
 
-  displayErrors = (errors) => {
+  displayErrors = (errors) =>
     errors.map((err, i) => (
       <p key={i}>{err}</p>
     ));
-  };
 
   render() {
     return (
       <div className="container">
         <h2>Log In</h2>
+        <div className="col s3">
+          <Link to="/register">
+            Not registered?
+          </Link>
+        </div>
         <div className="row">
           <form className="col s12" onSubmit={(e) => this.handleSubmit(e)}>
             <div className="row">
@@ -86,4 +114,10 @@ class Login extends Component {
   }
 }
 
-export default Login;
+function mapStateToProps(state) {
+  return {
+    user: state.user,
+  };
+}
+
+export default connect(mapStateToProps)(Login);
